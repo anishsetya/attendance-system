@@ -27,7 +27,7 @@ def addtofile(x):
     df.loc[x, 'status'] = 'present'
 
 
-
+hashmap=[0]*108
 
 capture=cv.VideoCapture(0)
 while True:
@@ -40,13 +40,18 @@ while True:
         faces_roi = gray[y:y+h,x:x+w]
         label, confidence = face_recognizer.predict(faces_roi)
         #print(f'Label = {people[label]} with a confidence of {confidence}')
-        addtofile(label-1)
+        #addtofile(label-1)
+        hashmap[label-1]+=1
         cv.putText(frame, str(df.iloc[label-1][2]), (20,20), cv.FONT_HERSHEY_COMPLEX, 1.0, (0,255,0), thickness=2)
         #print(label)
+        #cv.putText(frame,str(confidence),(20,60),cv.FONT_HERSHEY_COMPLEX, 1.0, (0,255,0), thickness=2)
         cv.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), thickness=2)
         cv.imshow('Detected Faces', frame)
     if cv.waitKey(20) & 0xFF==ord('d'):
         break
+for i in range (108):
+    if hashmap[i]>6:
+        addtofile(i)
 
 df.to_csv('my_dataframe.csv', index=False)
 
